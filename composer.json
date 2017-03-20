@@ -24,7 +24,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Combustion\\Asets\\": "src/"
+      "Combustion\\Assets\\": "src/"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "combustion-group/standard-lib",
-  "homepage": "https://github.com/Combustion-Group/StandardLib",
-  "description": "The Combustion Group package of common tools and services.",
+  "name": "combustion-group/assets",
+  "homepage": "https://github.com/Combustion-Group/assets",
+  "description": "The Combustion Group package for handling asset uploads and uploading them to s3.",
   "keywords": ["common", "tools", "services"],
   "type": "library",
   "license": "proprietary",
@@ -24,7 +24,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Combustion\\Asets\\": "src/"
+      "Combustion\\Assets\\": "src/"
     }
   }
 }

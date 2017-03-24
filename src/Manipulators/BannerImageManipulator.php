@@ -123,9 +123,9 @@ class BannerImageManipulator implements Manipulator
             }
         }
         // check aspect ratio
-        if(!$this->checkForAspectRatio((int)$data['width'],(int)$data['height'],'16:9')) {
-            throw new InvalidAspectRatio("Height adn Width given are not 16:9 aspect ratio");
-        }
+//        if(!$this->checkForAspectRatio((int)$data['width'],(int)$data['height'],'16:9')) {
+//            throw new InvalidAspectRatio("Height adn Width given are not 16:9 aspect ratio");
+//        }
         // if everything passes return $data
         return $data;
     }

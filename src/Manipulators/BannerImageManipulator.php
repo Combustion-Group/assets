@@ -105,19 +105,61 @@ class BannerImageManipulator implements Manipulator
      * @param array $options
      *
      * @return array
-     * @throws \Combustion\Assets\Exceptions\ImageDimensionsAreInvalid
+     * @throws \Combustion\StandardLib\Services\Assets\Exceptions\ImageDimensionsAreInvalid
      */
     private function checkForDimessions(array $options)
     {
+        // extract data needed
         $data=[
             'width'=>isset($options['width'])?$options['width']:0,
             'height'=>isset($options['height'])?$options['height']:0,
             'x'=>isset($options['x'])?$options['x']:0,
             'y'=>isset($options['y'])?$options['y']:0,
         ];
-        foreach ($data as $coordinates=>$value) if($value===0) throw new ImageDimensionsAreInvalid(ucfirst($coordinates)." cannot be empty or have a value of 0");
-        if((int)$data['width']*.5625!=(int)$data['height']) throw new InvalidAspectRatio("Height adn Width given are not 16:9 aspect ratio");
+        // check for invalid values
+        foreach ($data as $coordinates=>$value) {
+            if($value===0){
+                throw new ImageDimensionsAreInvalid(ucfirst($coordinates)." cannot be empty or have a value of 0");
+            }
+        }
+        // check aspect ratio
+        if(!$this->checkForAspectRatio((int)$data['width'],(int)$data['height'],'16:9')) {
+            throw new InvalidAspectRatio("Height adn Width given are not 16:9 aspect ratio");
+        }
+        // if everything passes return $data
         return $data;
+    }
+
+    /**
+     * @param int    $width
+     * @param int    $height
+     * @param string $ratio
+     *
+     * @return bool
+     */
+    private function checkForAspectRatio(int $width, int $height, string $ratio) : bool
+    {
+        // default to 4:4
+        $decimalRatio = 1;
+        // wich aspect ratio are we checking for
+        switch($ratio)
+        {
+            case "16:9":
+                $decimalRatio = .5625;
+                break;
+            case "4:4":
+                $decimalRatio = 1;
+                break;
+        }
+        // defailt to 4:4 and check if its the right aspect ratio
+        if($width*$decimalRatio==$height)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }

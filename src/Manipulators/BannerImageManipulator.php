@@ -25,14 +25,13 @@ class BannerImageManipulator implements Manipulator
     /**
      *
      */
-    const MANUPULATOR_NAME = 'ImageBanners';
+    const MANIPULATOR_NAME = 'ImageBanners';
+
 
     /**
-     * ImageGateway constructor.
+     * BannerImageManipulator constructor.
      *
-     * @param array                                               $config
-     * @param \Combustion\Assets\FileGateway $fileGateway
-     * @param \Illuminate\Filesystem\FilesystemAdapter            $localDriver
+     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -48,7 +47,7 @@ class BannerImageManipulator implements Manipulator
      */
     public function manipulate(UploadedFile $file, array $options=[]) : array
     {
-        $dimensions = $this->checkForDimessions($options);
+        $dimensions = $this->checkForDimensions($options);
         // get name
         $name = $file->getClientOriginalName();
         $path = $file->getPath();
@@ -101,13 +100,14 @@ class BannerImageManipulator implements Manipulator
         return $config;
     }
 
+
     /**
      * @param array $options
      *
      * @return array
-     * @throws \Combustion\StandardLib\Services\Assets\Exceptions\ImageDimensionsAreInvalid
+     * @throws \Combustion\Assets\Exceptions\ImageDimensionsAreInvalid
      */
-    private function checkForDimessions(array $options)
+    private function checkForDimensions(array $options) : array
     {
         // extract data needed
         $data=[
@@ -141,7 +141,7 @@ class BannerImageManipulator implements Manipulator
     {
         // default to 4:4
         $decimalRatio = 1;
-        // wich aspect ratio are we checking for
+        // which aspect ratio are we checking for
         switch($ratio)
         {
             case "16:9":
@@ -151,7 +151,7 @@ class BannerImageManipulator implements Manipulator
                 $decimalRatio = 1;
                 break;
         }
-        // defailt to 4:4 and check if its the right aspect ratio
+        // default to 4:4 and check if its the right aspect ratio
         if($width*$decimalRatio==$height)
         {
             return true;

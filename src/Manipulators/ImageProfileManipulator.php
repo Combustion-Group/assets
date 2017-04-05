@@ -25,14 +25,13 @@ class ImageProfileManipulator implements Manipulator
     /**
      *
      */
-    const MANUPULATOR_NAME = 'ImageProfiles';
+    const MANIPULATOR_NAME = 'ImageProfiles';
+
 
     /**
-     * ImageGateway constructor.
+     * ImageProfileManipulator constructor.
      *
-     * @param array                                               $config
-     * @param \Combustion\Assets\FileGateway $fileGateway
-     * @param \Illuminate\Filesystem\FilesystemAdapter            $localDriver
+     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -48,7 +47,7 @@ class ImageProfileManipulator implements Manipulator
      */
     public function manipulate(UploadedFile $file, array $options=[]) : array
     {
-        $dimensions = $this->checkForDimessions($options);
+        $dimensions = $this->checkForDimensions($options);
         // get name
         $name = $file->getClientOriginalName();
         $path = $file->getPath();
@@ -112,13 +111,9 @@ class ImageProfileManipulator implements Manipulator
         return ImageProfileManipulator::MANUPULATOR_NAME;
     }
 
-    /**
-     * @param array $options
-     *
-     * @return array
-     * @throws \Combustion\Assets\Exceptions\ImageDimensionsAreInvalid
-     */
-    private function checkForDimessions(array $options)
+
+
+    private function checkForDimensions(array $options)
     {
         $data=[
             'width'=>isset($options['width'])?$options['width']:0,

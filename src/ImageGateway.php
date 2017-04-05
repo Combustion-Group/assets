@@ -42,7 +42,12 @@ class ImageGateway extends DocumentsGateway
     /**
      *
      */
-    const DOCUMENT_TYPE = 'image';
+    const   DOCUMENT_TYPE   = 'image',
+            MIMES           =   [
+                                    "image/jpeg",
+                                    "image/png",
+                                    "image/gif"
+                                ];
 
 
     /**

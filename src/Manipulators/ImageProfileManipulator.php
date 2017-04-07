@@ -103,16 +103,6 @@ class ImageProfileManipulator implements Manipulator
         return $config;
     }
 
-    /**
-     * @return string
-     */
-    public function getManipulator()
-    {
-        return ImageProfileManipulator::MANUPULATOR_NAME;
-    }
-
-
-
     private function checkForDimensions(array $options)
     {
         $data=[

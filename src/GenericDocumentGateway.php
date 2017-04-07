@@ -1,27 +1,20 @@
 <?php
+
+
 namespace Combustion\Assets;
 
+
 use Combustion\Assets\Contracts\AssetDocumentInterface;
-use Combustion\Assets\Contracts\DocumentGatewayInterface;
-use Combustion\Assets\Contracts\Manipulator;
-use Combustion\Assets\Exceptions\ImageDimensionsAreInvalid;
-use Combustion\Assets\Exceptions\ModelMustHaveHasAssetsTrait;
-use Combustion\Assets\Exceptions\ValidationFailed;
-use Combustion\Assets\Traits\HasAssets;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Constraint;
-use Intervention\Image\Facades\Image;
-use Combustion\Assets\Models\Image as ImageModel;
 
 /**
- * Class ImageGateway
+ * Class GenericDocumentGateway
  *
  * @package Combustion\Assets
- * @author Luis A. Perez <lperez@combustiongroup.com>
+ * @author  Luis A. Perez <lperez@combustiongroup.com>
  */
-class ImageGateway extends DocumentsGateway
+class GenericDocumentGateway extends DocumentsGateway
 {
     /**
      * @var array
@@ -40,23 +33,13 @@ class ImageGateway extends DocumentsGateway
      */
 
     /**
-     *
+     * Mime type will be empty since this gateway will upload any document
      */
     const   DOCUMENT_TYPE   = 'image',
-            MIMES           =   [
-                                    "image/jpeg",
-                                    "image/png",
-                                    "image/gif"
-                                ];
+            MIMES           =   [];
 
 
-    /**
-     * ImageGateway constructor.
-     *
-     * @param array                                               $config
-     * @param \Combustion\Assets\FileGateway $fileGateway
-     * @param \Illuminate\Filesystem\FilesystemAdapter            $localDriver
-     */
+
     public function __construct(array $config, FileGateway $fileGateway, FilesystemAdapter $localDriver,array $manipulators)
     {
         $this->fileGateway  = $fileGateway;
@@ -65,17 +48,18 @@ class ImageGateway extends DocumentsGateway
         $this->manipulators = $manipulators;
     }
 
+
     /**
-     * @param \Illuminate\Http\UploadedFile $image
+     * @param \Illuminate\Http\UploadedFile $file
      * @param array                         $options
      *
      * @return \Combustion\Assets\Contracts\AssetDocumentInterface
      */
     public function create(UploadedFile $file, array $options = []) : AssetDocumentInterface
     {
-        // get iamge manipulators and pass the options
+        // get Document manipulators and pass the options
         $manipulator = $this->getManipulator($options);
-        // manipulate image ad needed
+        // manipulate document as needed
         $imageBag = $manipulator->manipulate($this->moveToLocalDisk($file),$options);
         foreach ($imageBag as $size => $imageData)
         {
@@ -131,4 +115,6 @@ class ImageGateway extends DocumentsGateway
         }
         return $config;
     }
+
+
 }

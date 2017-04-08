@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Combustion\Assets\Manipulators;
+namespace Combustion\Assets\Manipulators\Generic;
 
 
 use Combustion\Assets\Contracts\Manipulator;
-use Combustion\Assets\Exceptions\InvalidAspectRatio;
 use Combustion\Assets\Exceptions\ValidationFailed;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
@@ -21,7 +20,7 @@ class GenericDocumentManipulator implements Manipulator
     /**
      *
      */
-    const MANIPULATOR_NAME = 'ImageProfiles';
+    const MANIPULATOR_NAME = 'GenericDocuments';
 
 
     /**
@@ -43,11 +42,14 @@ class GenericDocumentManipulator implements Manipulator
      */
     public function manipulate(UploadedFile $file, array $options = []): array
     {
-        $dimensions = $this->checkForDimensions($options);
-        // get name
-        $name = $file->getClientOriginalName();
-        $path = $file->getPath();
-        $extension = $file->getExtension();
+        // get mime and thumbnail
+        $mime = $file->getMimeType();
+        $thumbnail = $this->getThumbnailFor($mime);
+        // check if thumbnail is in files table already if not imported in
+        if(is_null($thumbnail['id']))
+        {
+            $thumbnail = $hit
+        }
         // create image bag and add original data
         $imageBag = [
             'original' => ['folder' => $path, 'name' => $name, 'extension' => $extension]
@@ -75,6 +77,19 @@ class GenericDocumentManipulator implements Manipulator
         return $imageBag;
     }
 
+    private function getThumbnailFor($mimeType) : array
+    {
+        foreach ($this->config['mimes'] as $documentType => $mimes)
+        {
+            if(in_array($mimeType,$mimes))
+            {
+                return $this->config['thumbnails'][$documentType];
+            }
+        }
+    }
+
+
+
     /**
      * @param array $config
      *
@@ -84,24 +99,19 @@ class GenericDocumentManipulator implements Manipulator
     public function validatesConfig(array $config): array
     {
         $validationRules = [
-            "sizes" => "required|array",
-            "sizes.*" => "required|array",
-            "sizes.*.y" => "required|numeric|nullable",
-            "sizes.*.x" => "required|numeric|nullable",
+            "thumbnails" => "required|array",
+            "thumbnails.*" => "required|array",
+            "thumbnails.*.id" => "required|numeric|nullable",
+            "thumbnails.*.url" => "required|numeric",
         ];
-        $validation = Validator::make($config, $validationRules);
+        $messages = [
+            "thumbnails"=>"Thumbnails need to be configured",
+            "thumbnails.*.url"=>"The url to an image is required",
+        ];
+        $validation = Validator::make($config, $validationRules,$messages);
         if ($validation->fails()) {
-            throw new ValidationFailed("Validation for ImageGateway config array failed.");
+            throw new ValidationFailed("Validation for GenericDocumentManipulator config array failed.");
         }
         return $config;
     }
-
-    /**
-     * @return string
-     */
-    public function getManipulator()
-    {
-        return ImageProfileManipulator::MANUPULATOR_NAME;
-    }
-
 }

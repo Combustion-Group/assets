@@ -46,9 +46,10 @@ class GenericDocumentManipulator implements Manipulator
         $mime = $file->getMimeType();
         $thumbnail = $this->getThumbnailFor($mime);
         // check if thumbnail is in files table already if not imported in
+        //TODO finish the document manipulator
         if(is_null($thumbnail['id']))
         {
-            $thumbnail = $hit
+            $thumbnail;
         }
         // create image bag and add original data
         $imageBag = [

@@ -46,35 +46,36 @@ class GenericDocumentManipulator implements Manipulator
         $mime = $file->getMimeType();
         $thumbnail = $this->getThumbnailFor($mime);
         // check if thumbnail is in files table already if not imported in
+        //TODO finish the document manipulator
         if(is_null($thumbnail['id']))
         {
-            $thumbnail = $hit
+            $thumbnail;
         }
         // create image bag and add original data
-        $imageBag = [
-            'original' => ['folder' => $path, 'name' => $name, 'extension' => $extension]
-        ];
-        $image = Image::make($path . '/' . $name . '.' . $extension);
-        if (is_array($dimensions)) {
-            $image->crop($dimensions['width'], $dimensions['height'], $dimensions['x'], $dimensions['y'])->save($path . '/' . $name . '.' . $extension);
-        }
-        foreach ($this->config['sizes'] as $size => $imageSize) {
-            // get name
-            $sizeName = md5(time() . $size . '-' . $file->getClientOriginalName());
-            // append size to the name
-            $imagePath = $path . '/' . $sizeName . '.' . $extension;
-            // make data for array
-            $imageData = [$size => ['folder' => $path, 'name' => $sizeName, 'extension' => $extension]];
-            // push data in
-            $imageBag = array_merge($imageBag, $imageData);
-            // manipulate image
-            $image->fit($imageSize['x'], $imageSize['y'], function (Constraint $constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-                // save once done
-            })->orientate()->save($imagePath);
-        }
-        return $imageBag;
+//        $imageBag = [
+//            'original' => ['folder' => $path, 'name' => $name, 'extension' => $extension]
+//        ];
+//        $image = Image::make($path . '/' . $name . '.' . $extension);
+//        if (is_array($dimensions)) {
+//            $image->crop($dimensions['width'], $dimensions['height'], $dimensions['x'], $dimensions['y'])->save($path . '/' . $name . '.' . $extension);
+//        }
+//        foreach ($this->config['sizes'] as $size => $imageSize) {
+//            // get name
+//            $sizeName = md5(time() . $size . '-' . $file->getClientOriginalName());
+//            // append size to the name
+//            $imagePath = $path . '/' . $sizeName . '.' . $extension;
+//            // make data for array
+//            $imageData = [$size => ['folder' => $path, 'name' => $sizeName, 'extension' => $extension]];
+//            // push data in
+//            $imageBag = array_merge($imageBag, $imageData);
+//            // manipulate image
+//            $image->fit($imageSize['x'], $imageSize['y'], function (Constraint $constraint) {
+//                $constraint->aspectRatio();
+//                $constraint->upsize();
+//                // save once done
+//            })->orientate()->save($imagePath);
+//        }
+//        return $imageBag;
     }
 
     private function getThumbnailFor($mimeType) : array

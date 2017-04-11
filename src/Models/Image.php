@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Image extends Model implements AssetDocumentInterface
 {
     use IsDocument,SoftDeletes;
+
+    protected $table = "images";
+
     /**
      * @var array
      */

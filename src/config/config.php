@@ -2,8 +2,8 @@
 use Combustion\Assets\AssetsGateway;
 use Combustion\Assets\ImageGateway;
 use Combustion\Assets\FileGateway;
-use Combustion\Assets\Manipulators\ImageProfileManipulator;
-use Combustion\Assets\Manipulators\BannerImageManipulator;
+use Combustion\Assets\Manipulators\Images\ImageProfileManipulator;
+use Combustion\Assets\Manipulators\Images\BannerImageManipulator;
 
 return [
     AssetsGateway::class => [

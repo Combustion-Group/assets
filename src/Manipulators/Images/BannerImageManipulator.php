@@ -1,7 +1,8 @@
 <?php
-namespace Combustion\Assets\Manipulators;
+namespace Combustion\Assets\Manipulators\Images;
 
 use Combustion\Assets\Contracts\Manipulator;
+use Combustion\Assets\Exceptions\ImageDimensionsAreInvalid;
 use Combustion\Assets\Exceptions\InvalidAspectRatio;
 use Combustion\Assets\Exceptions\ValidationFailed;
 use Illuminate\Http\UploadedFile;
@@ -9,14 +10,13 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
 
-
 /**
- * Class ImageProfileManipulator
+ * Class BannerImageManipulator
  *
- * @package Combustion\StandardLib\src\Services\Assets\Manipulators
+ * @package Combustion\Assets\Manipulators
  * @author  Luis A. Perez <lperez@combustiongroup.com>
  */
-class ImageProfileManipulator implements Manipulator
+class BannerImageManipulator implements Manipulator
 {
     /**
      * @var array
@@ -25,11 +25,11 @@ class ImageProfileManipulator implements Manipulator
     /**
      *
      */
-    const MANIPULATOR_NAME = 'ImageProfiles';
+    const MANIPULATOR_NAME = 'ImageBanners';
 
 
     /**
-     * ImageProfileManipulator constructor.
+     * BannerImageManipulator constructor.
      *
      * @param array $config
      */
@@ -57,10 +57,7 @@ class ImageProfileManipulator implements Manipulator
             'original' => ['folder' => $path,'name' => $name,'extension' => $extension]
         ];
         $image = Image::make($path.'/'.$name.'.'.$extension);
-        if(is_array($dimensions))
-        {
-            $image->crop($dimensions['width'],$dimensions['height'],$dimensions['x'],$dimensions['y'])->save($path.'/'.$name.'.'.$extension);
-        }
+        $image->crop($dimensions['width'],$dimensions['height'],$dimensions['x'],$dimensions['y'])->save($path.'/'.$name.'.'.$extension);
         foreach ($this->config['sizes'] as $size => $imageSize)
         {
             // get name
@@ -103,27 +100,66 @@ class ImageProfileManipulator implements Manipulator
         return $config;
     }
 
+
     /**
-     * @return string
+     * @param array $options
+     *
+     * @return array
+     * @throws \Combustion\Assets\Exceptions\ImageDimensionsAreInvalid
      */
-    public function getManipulator()
+    private function checkForDimensions(array $options) : array
     {
-        return ImageProfileManipulator::MANUPULATOR_NAME;
-    }
-
-
-
-    private function checkForDimensions(array $options)
-    {
+        // extract data needed
         $data=[
             'width'=>isset($options['width'])?$options['width']:0,
             'height'=>isset($options['height'])?$options['height']:0,
             'x'=>isset($options['x'])?$options['x']:0,
             'y'=>isset($options['y'])?$options['y']:0,
         ];
-        foreach ($data as $coordinates=>$value) if($value===0) return false;
-        if((int)$data['width']!=(int)$data['height']) throw new InvalidAspectRatio("Height adn Width given are not 4:4 aspect ratio");
+        // check for invalid values
+        foreach ($data as $coordinates=>$value) {
+            if($value===0){
+                throw new ImageDimensionsAreInvalid(ucfirst($coordinates)." cannot be empty or have a value of 0");
+            }
+        }
+        // check aspect ratio
+//        if(!$this->checkForAspectRatio((int)$data['width'],(int)$data['height'],'16:9')) {
+//            throw new InvalidAspectRatio("Height adn Width given are not 16:9 aspect ratio");
+//        }
+        // if everything passes return $data
         return $data;
+    }
+
+    /**
+     * @param int    $width
+     * @param int    $height
+     * @param string $ratio
+     *
+     * @return bool
+     */
+    private function checkForAspectRatio(int $width, int $height, string $ratio) : bool
+    {
+        // default to 4:4
+        $decimalRatio = 1;
+        // which aspect ratio are we checking for
+        switch($ratio)
+        {
+            case "16:9":
+                $decimalRatio = .5625;
+                break;
+            case "4:4":
+                $decimalRatio = 1;
+                break;
+        }
+        // default to 4:4 and check if its the right aspect ratio
+        if($width*$decimalRatio==$height)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }

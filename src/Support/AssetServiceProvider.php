@@ -21,6 +21,15 @@ use Illuminate\Foundation\Application;
 class AssetServiceProvider extends ServiceProvider
 {
     /**
+     * Load migration from the package folder
+     */
+    public function boot()
+    {
+        $this->loadMigrationsFrom(__DIR__.'/../Migrations');
+    }
+
+
+    /**
      * Create the User Gateway as a singleton
      */
     public function register()

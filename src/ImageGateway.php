@@ -65,15 +65,16 @@ class ImageGateway extends DocumentsGateway
         $this->manipulators = $manipulators;
     }
 
+
     /**
-     * @param \Illuminate\Http\UploadedFile $image
+     * @param \Illuminate\Http\UploadedFile $file
      * @param array                         $options
      *
      * @return \Combustion\Assets\Contracts\AssetDocumentInterface
      */
     public function create(UploadedFile $file, array $options = []) : AssetDocumentInterface
     {
-        // get iamge manipulators and pass the options
+        // get image manipulators and pass the options
         $manipulator = $this->getManipulator($options);
         // manipulate image ad needed
         $imageBag = $manipulator->manipulate($this->moveToLocalDisk($file),$options);

@@ -20,7 +20,7 @@ class AssetsGateway
      */
     protected $config;
     /**
-     * @var DocumentGatewayInterface[]
+     * @var DocumentsGateway[]
      */
     protected $drivers;
 
@@ -38,10 +38,11 @@ class AssetsGateway
 
     /**
      * @param \Illuminate\Http\UploadedFile $file
+     * @param array                         $options
      *
      * @return \Combustion\Assets\Models\Asset
      */
-    public function createAsset(UploadedFile $file,array $options=[]) : Asset
+    public function createAsset(UploadedFile $file, array $options=[]) : Asset
     {
         // what type of asset is it
         $driver = $this->getDriver($file);
@@ -80,10 +81,11 @@ class AssetsGateway
         return Asset::create($attributes);
     }
 
+
     /**
      * @param \Illuminate\Http\UploadedFile $file
      *
-     * @return \Combustion\Assets\Contracts\DocumentGatewayInterface
+     * @return \Combustion\Assets\DocumentsGateway
      * @throws \Combustion\Assets\Exceptions\AssetDriverNotFound
      */
     private function getDriver(UploadedFile $file) : DocumentsGateway

@@ -30,6 +30,7 @@ class GenericDocument extends Model implements AssetDocumentInterface
                                 "application/vnd.ms-excel.addin.macroEnabled.12",
                                 "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
                             ];
+
     protected $table = 'microsoft_documents';
     /**
      * @var array
@@ -39,11 +40,6 @@ class GenericDocument extends Model implements AssetDocumentInterface
         'document_id',
         'title',
     ];
-
-    /**
-     * @var array
-     */
-    protected $with = ['image_file'];
     /*
      * RELATIONSHIPS
      */

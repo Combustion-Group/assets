@@ -1,9 +1,8 @@
 <?php
-namespace Combustion\Assets\Migrations;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAssetsTable extends Migration
+class CreateAssetsTableAssets extends Migration
 {
     /**
      * Run the migrations.

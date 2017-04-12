@@ -1,9 +1,8 @@
 <?php
-namespace Combustion\Assets\Migrations;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAssetResourcePovitTable extends Migration
+class CreateAssetResourcePivotTableAssets extends Migration
 {
     /**
      * Run the migrations.

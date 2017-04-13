@@ -2,9 +2,12 @@
 namespace Combustion\Assets\Models;
 
 use Combustion\Assets\Contracts\AssetDocumentInterface;
+use Combustion\Assets\Models\Scopes\DocumentStructureScope;
 use Combustion\Assets\Traits\IsDocument;
 use Combustion\StandardLib\Models\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\JoinClause;
 
 /**
  * Class Image
@@ -36,6 +39,12 @@ class Image extends Model implements AssetDocumentInterface
     /*
      * RELATIONSHIPS
      */
+
+    public static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new DocumentStructureScope());
+    }
 
     /**
      * @return int
@@ -76,5 +85,45 @@ class Image extends Model implements AssetDocumentInterface
     {
         return $this->hasOne(File::class,'id','large_id');
     }
-
+    
+    // Scopes to pull in data on the same level
+    public function scopeWithFilesData(Builder $query)
+    {
+        $query->join('files as small_files_table',function(JoinClause $join){
+            $join->on("small_files_table.id","images.small_id");
+        });
+        $query->join('files as medium_files_table',function(JoinClause $join){
+            $join->on("medium_files_table.id","images.medium_id");
+        });
+        $query->join('files as large_files_table',function(JoinClause $join){
+            $join->on("large_files_table.id","images.large_id");
+        });
+        $query->join('files as original_files_table',function(JoinClause $join){
+            $join->on("original_files_table.id","images.image_id");
+        });
+        // small
+        $this->appendToSelect("small_files_table.id as small_file_id");
+        $this->appendToSelect("small_files_table.mime as small_file_mime");
+        $this->appendToSelect("small_files_table.original_name as small_file_original_name");
+        $this->appendToSelect("small_files_table.url as small_file_url");
+        $this->appendToSelect("small_files_table.extension as small_file_extension");
+        // medium
+        $this->appendToSelect("medium_files_table.id as medium_file_id");
+        $this->appendToSelect("medium_files_table.mime as medium_file_mime");
+        $this->appendToSelect("medium_files_table.original_name as medium_file_original_name");
+        $this->appendToSelect("medium_files_table.url as medium_file_url");
+        $this->appendToSelect("medium_files_table.extension as medium_file_extension");
+        // large
+        $this->appendToSelect("large_files_table.id as large_file_id");
+        $this->appendToSelect("large_files_table.mime as large_file_mime");
+        $this->appendToSelect("large_files_table.original_name as large_file_original_name");
+        $this->appendToSelect("large_files_table.url as large_file_url");
+        $this->appendToSelect("large_files_table.extension as large_file_extension");
+        // original
+        $this->appendToSelect("original_files_table.id as original_file_id");
+        $this->appendToSelect("original_files_table.mime as original_file_mime");
+        $this->appendToSelect("original_files_table.original_name as original_file_original_name");
+        $this->appendToSelect("original_files_table.url as original_file_url");
+        $this->appendToSelect("original_files_table.extension as original_file_extension");
+    }
 }

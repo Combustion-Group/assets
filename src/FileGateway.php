@@ -55,7 +55,7 @@ class FileGateway
     {
         // extract information needed from file
         $file_information = [
-            'mime'              => $file->getMimeType(),
+            'mime'              => $file->getClientMimeType(),
             'size'              => $file->getSize(),
             'original_name'     => $file->getClientOriginalName(),
             'url'               => $this->buildUrl($this->buildCloudPath($file->getClientOriginalName(),$file->getExtension())),

@@ -66,9 +66,9 @@ abstract class DocumentsGateway
     {
         $disk = $this->localDriver;
         $newFileName=md5(time().$file->getClientOriginalName());
-        $fileDestination = $this->fileGateway->getConfig()['local_document_folder_name'].'/'.$newFileName.'.'.$file->extension();
-        $fileLocation = $this->fileGateway->getConfig()['local_document_folder'].'/'.$newFileName.'.'.$file->extension();
+        $fileDestination = $this->fileGateway->getConfig()['local_document_folder_name'].'/'.$newFileName.'.'.$file->getClientOriginalExtension();
+        $fileLocation = $this->fileGateway->getConfig()['local_document_folder'].'/'.$newFileName.'.'.$file->getClientOriginalExtension();
         $disk->put($fileDestination, file_get_contents($file));
-        return new UploadedFile($fileLocation,$newFileName);
+        return new UploadedFile($fileLocation,$newFileName,$file->getClientMimeType());
     }
 }

@@ -27,13 +27,19 @@ class DocumentStructureScope implements Scope
         if($model instanceof Image)
         {
             // refer to model to see scopeWithFilesData(Builder $query)
-            $builder->WithFilesData();
+            $builder
+                ->appendToSelect('images.*')
+                ->WithFilesData()
+                ->PullSelectInQuery();
         }
 
         if($model instanceof GenericDocument)
         {
             // refer to model to see scopeWithFilesData(Builder $query)
-            $builder->WithFilesData();
+            $builder
+                ->appendToSelect('microsoft_documents.*')
+                ->WithFilesData()
+                ->PullSelectInQuery();
         }
     }
 }

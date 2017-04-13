@@ -48,7 +48,7 @@ class GenericDocumentManipulator implements Manipulator
     public function manipulate(UploadedFile $file, array $options = []): array
     {
         // get mime and thumbnail
-        $mime = $file->getMimeType();
+        $mime = $file->getClientMimeType();
         $thumbnail = $this->getThumbnailFor($mime);
         // check if thumbnail is in files table already if not imported in
         $filesBag = [];

@@ -3,7 +3,7 @@ namespace Combustion\Assets\Models;
 
 use Combustion\Assets\Contracts\AssetDocumentInterface;
 use Combustion\Assets\Traits\IsDocument;
-use Illuminate\Database\Eloquent\Model;
+use Combustion\StandardLib\Models\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**

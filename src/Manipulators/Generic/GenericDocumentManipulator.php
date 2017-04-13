@@ -53,7 +53,7 @@ class GenericDocumentManipulator implements Manipulator
         $filesBag = [];
         if(is_null($thumbnail['id'])) // upload thumbnail for this asset
         {
-            $localImage = storage_path('app/documents').'/temp.png';
+            $localImage = storage_path('app/documents').'/'.md5('temp'.time()).'.png';
             // move file from url to local
             file_put_contents($localImage, file_get_contents($thumbnail['url']));
             // use UploadedFile object to get file data
@@ -101,7 +101,7 @@ class GenericDocumentManipulator implements Manipulator
             "thumbnails" => "required|array",
             "thumbnails.*" => "required|array",
             "thumbnails.*.id" => "required|numeric|nullable",
-            "thumbnails.*.url" => "required|numeric",
+            "thumbnails.*.url" => "required|string",
         ];
         $messages = [
             "thumbnails"=>"Thumbnails need to be configured",

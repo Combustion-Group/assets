@@ -2,7 +2,6 @@
 namespace Combustion\Assets\Models;
 
 use Combustion\StandardLib\Models\Model;
-use Combustion\Assets\Traits\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;

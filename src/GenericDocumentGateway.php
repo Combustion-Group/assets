@@ -5,8 +5,11 @@ namespace Combustion\Assets;
 
 
 use Combustion\Assets\Contracts\AssetDocumentInterface;
+use Combustion\Assets\Exceptions\ValidationFailed;
+use Combustion\Assets\Models\GenericDocument;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class GenericDocumentGateway
@@ -35,8 +38,7 @@ class GenericDocumentGateway extends DocumentsGateway
     /**
      * Mime type will be empty since this gateway will upload any document
      */
-    const   DOCUMENT_TYPE   = 'image',
-            MIMES           =   [];
+    const   DOCUMENT_TYPE   = 'image';
 
 
 
@@ -60,21 +62,19 @@ class GenericDocumentGateway extends DocumentsGateway
         // get Document manipulators and pass the options
         $manipulator = $this->getManipulator($options);
         // manipulate document as needed
-        $imageBag = $manipulator->manipulate($this->moveToLocalDisk($file),$options);
-        foreach ($imageBag as $size => $imageData)
-        {
-            $image = new UploadedFile($imageData['folder'].'/'.$imageData['name'].'.'.$imageData['extension'],$imageData['name']);
-            $imageBag[$size]['model'] = $this->fileGateway->createFile($image);
-        }
-        $imageModelData = [
-            'title'      => $imageBag['original']['name'],
-            'slug'       => time().$imageBag['original']['name'],
-            'image_id'   => $imageBag['original']['model']->id,
-            'large_id'   => $imageBag['large']['model']->id,
-            'small_id'   => $imageBag['small']['model']->id,
-            'medium_id'  => $imageBag['medium']['model']->id,
+        $filesBag = $manipulator->manipulate($this->moveToLocalDisk($file),$options);
+        // get thumbnail file id
+        $thumbnailId = is_null($filesBag['thumbnail']['file']) ? $filesBag['thumbnail']['id'] : $this->fileGateway->createFile($filesBag['thumbnail']['file'])->getAttribute('id');
+        // get document file id
+        $document = $this->fileGateway->createFile($filesBag['document']['file']);
+        $title = isset($options['title']) ? $options['title'] : $document->getAttribute('original_name');
+        $documentData = [
+            'title'         => $title,
+            'slug'          => time().$title,
+            'thumbnail_id'  => $thumbnailId,
+            'document_id'   => $document->getAttribute('id')
         ];
-        return ImageModel::create($imageModelData);
+        return GenericDocument::create($documentData);
     }
     /**
      * @param int $imageId

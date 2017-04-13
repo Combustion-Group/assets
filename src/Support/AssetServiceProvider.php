@@ -97,7 +97,7 @@ class AssetServiceProvider extends ServiceProvider
             );
         });
         $this->app->singleton(GenericDocumentManipulator::class, function (Application $app, array $params = []) {
-            $config = $app['config']['assets'][AssetsGateway::class]['drivers'][ImageGateway::DOCUMENT_TYPE]['config']['manipulators'][GenericDocumentManipulator::MANIPULATOR_NAME];
+            $config = $app['config']['assets'][AssetsGateway::class]['drivers'][GenericDocumentGateway::DOCUMENT_TYPE]['config']['manipulators'][GenericDocumentManipulator::MANIPULATOR_NAME];
             return new GenericDocumentManipulator(
                 $config
             );

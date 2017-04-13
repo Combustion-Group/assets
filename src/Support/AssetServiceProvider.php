@@ -25,7 +25,7 @@ class AssetServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../MigrASswsations');
+        $this->loadMigrationsFrom(__DIR__.'/../Migrations');
     }
 
 

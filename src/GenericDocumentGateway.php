@@ -38,7 +38,7 @@ class GenericDocumentGateway extends DocumentsGateway
     /**
      * Mime type will be empty since this gateway will upload any document
      */
-    const   DOCUMENT_TYPE   = 'image';
+    const   DOCUMENT_TYPE   = 'documents';
 
 
 

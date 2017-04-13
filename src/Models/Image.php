@@ -35,10 +35,6 @@ class Image extends Model implements AssetDocumentInterface
         'title',
     ];
 
-    /**
-     * @var array
-     */
-    protected $with = ['image_file'];
     /*
      * RELATIONSHIPS
      */

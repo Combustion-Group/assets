@@ -53,9 +53,10 @@ class FileGateway
      */
     public function createFile(UploadedFile $file) : File
     {
+        $mimeType = $file->getClientMimeType() == "application/octet-stream" ? $file->getMimeType() : $file->getClientMimeType();
         // extract information needed from file
         $file_information = [
-            'mime'              => $file->getClientMimeType(),
+            'mime'              => $mimeType,
             'size'              => $file->getSize(),
             'original_name'     => $file->getClientOriginalName(),
             'url'               => $this->buildUrl($this->buildCloudPath($file->getClientOriginalName(),$file->getExtension())),

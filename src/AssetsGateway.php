@@ -90,7 +90,7 @@ class AssetsGateway
      */
     private function getDriver(UploadedFile $file) : DocumentsGateway
     {
-        $mimeType = $file->getMimeType();
+        $mimeType = $file->getClientMimeType();
         foreach ($this->drivers as $driver)
         {
             if(in_array($mimeType,$driver->getConfig()['mimes']))return $driver;

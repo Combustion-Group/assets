@@ -95,7 +95,13 @@ class AssetsGateway
         {
             if(in_array($mimeType,$driver->getConfig()['mimes']))return $driver;
         }
-        throw new AssetDriverNotFound("Driver for mime type $mimeType was not found.");
+        return $this->getDefaultDriver();
+//        throw new AssetDriverNotFound("Driver for mime type $mimeType was not found.");
+    }
+
+    private function getDefaultDriver()
+    {
+        return $this->drivers[$this->config['default_driver']];
     }
 
     /**

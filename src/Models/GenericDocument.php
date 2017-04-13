@@ -10,6 +10,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 
+/**
+ * Class GenericDocument
+ *
+ * @package Combustion\Assets\Models
+ * @author  Luis A. Perez <lperez@combustiongroup.com>
+ */
 class GenericDocument extends Model implements AssetDocumentInterface
 {
     use IsDocument,SoftDeletes;
@@ -34,6 +40,9 @@ class GenericDocument extends Model implements AssetDocumentInterface
                                 "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
                             ];
 
+    /**
+     * @var string
+     */
     protected $table = 'microsoft_documents';
     /**
      * @var array
@@ -47,6 +56,9 @@ class GenericDocument extends Model implements AssetDocumentInterface
      * RELATIONSHIPS
      */
 
+    /**
+     *
+     */
     public static function boot()
     {
         parent::boot();
@@ -78,6 +90,10 @@ class GenericDocument extends Model implements AssetDocumentInterface
     }
 
     // Scopes to pull in data on the same level
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
     public function scopeWithFilesData(Builder $query)
     {
         $query->join('files as thumbnail_files_table',function(JoinClause $join){
@@ -87,16 +103,16 @@ class GenericDocument extends Model implements AssetDocumentInterface
             $join->on("document_files_table.id","microsoft_documents.document_id");
         });
         // Thumbnail
-        $this->appendToSelect("small_files_table.id as small_file_id");
-        $this->appendToSelect("small_files_table.mime as small_file_mime");
-        $this->appendToSelect("small_files_table.original_name as small_file_original_name");
-        $this->appendToSelect("small_files_table.url as small_file_url");
-        $this->appendToSelect("small_files_table.extension as small_file_extension");
+        $this->appendToSelect("thumbnail_files_table.id as thumbnail_file_id");
+        $this->appendToSelect("thumbnail_files_table.mime as thumbnail_file_mime");
+        $this->appendToSelect("thumbnail_files_table.original_name as thumbnail_file_original_name");
+        $this->appendToSelect("thumbnail_files_table.url as thumbnail_file_url");
+        $this->appendToSelect("thumbnail_files_table.extension as thumbnail_file_extension");
         // Document
-        $this->appendToSelect("medium_files_table.id as medium_file_id");
-        $this->appendToSelect("medium_files_table.mime as medium_file_mime");
-        $this->appendToSelect("medium_files_table.original_name as medium_file_original_name");
-        $this->appendToSelect("medium_files_table.url as medium_file_url");
-        $this->appendToSelect("medium_files_table.extension as medium_file_extension");
+        $this->appendToSelect("document_files_table.id as document_file_id");
+        $this->appendToSelect("document_files_table.mime as document_file_mime");
+        $this->appendToSelect("document_files_table.original_name as document_file_original_name");
+        $this->appendToSelect("document_files_table.url as document_file_url");
+        $this->appendToSelect("document_files_table.extension as document_file_extension");
     }
 }

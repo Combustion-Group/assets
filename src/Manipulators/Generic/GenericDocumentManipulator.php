@@ -6,6 +6,7 @@ namespace Combustion\Assets\Manipulators\Generic;
 
 use Combustion\Assets\Contracts\Manipulator;
 use Combustion\Assets\Exceptions\ValidationFailed;
+use Combustion\Assets\Models\GenericDocument;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,14 +54,14 @@ class GenericDocumentManipulator implements Manipulator
         $filesBag = [];
         if(is_null($thumbnail['id'])) // upload thumbnail for this asset
         {
-            $localImage = storage_path('app/documents').'/'.md5('temp'.time()).'.png';
+            $fileName = md5('temp'.time());
+            $localImage = storage_path('app/documents').'/'.$fileName.'.png';
             // move file from url to local
             file_put_contents($localImage, file_get_contents($thumbnail['url']));
             // use UploadedFile object to get file data
-            $thumbnailFile = new UploadedFile($localImage,'temp');
+            $thumbnailFile = new UploadedFile($localImage,$fileName);
             // add thumbnail to $filesBag
-            $filesBag['thumbnail']=
-                ['file' => $thumbnailFile, 'id'   => null];
+            $filesBag['thumbnail']=['file' => $thumbnailFile, 'id'   => null];
         }
         else
         {
@@ -78,6 +79,7 @@ class GenericDocumentManipulator implements Manipulator
      */
     private function getThumbnailFor($mimeType) : array
     {
+        // look for document in existing array
         foreach ($this->config['mimes'] as $documentType => $mimes)
         {
             if(in_array($mimeType,$mimes))
@@ -85,6 +87,8 @@ class GenericDocumentManipulator implements Manipulator
                 return $this->config['thumbnails'][$documentType];
             }
         }
+        // return generic if not compatible with existing mime types
+        return $this->config['thumbnails'][GenericDocument::GENERIC];
     }
 
 

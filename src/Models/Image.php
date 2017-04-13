@@ -19,6 +19,9 @@ class Image extends Model implements AssetDocumentInterface
 {
     use IsDocument,SoftDeletes;
 
+    /**
+     * @var string
+     */
     protected $table = "images";
 
     /**
@@ -40,6 +43,9 @@ class Image extends Model implements AssetDocumentInterface
      * RELATIONSHIPS
      */
 
+    /**
+     *
+     */
     public static function boot()
     {
         parent::boot();
@@ -87,6 +93,10 @@ class Image extends Model implements AssetDocumentInterface
     }
     
     // Scopes to pull in data on the same level
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
     public function scopeWithFilesData(Builder $query)
     {
         $query->join('files as small_files_table',function(JoinClause $join){

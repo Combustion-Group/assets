@@ -14,7 +14,7 @@ use Illuminate\Database\Query\JoinClause;
  */
 class Asset extends Model
 {
-    use SoftDeletes,BaseModel;
+    use SoftDeletes;
 
     /**
      * @var array

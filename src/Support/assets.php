@@ -1,9 +1,13 @@
 <?php
-use Combustion\Assets\AssetsGateway;
-use Combustion\Assets\ImageGateway;
+
 use Combustion\Assets\FileGateway;
+use Combustion\Assets\ImageGateway;
+use Combustion\Assets\AssetsGateway;
+use Combustion\Assets\Models\GenericDocument;
+use Combustion\Assets\GenericDocumentGateway;
 use Combustion\Assets\Manipulators\Images\BannerImageManipulator;
 use Combustion\Assets\Manipulators\Images\ImageProfileManipulator;
+use Combustion\Assets\Manipulators\Generic\GenericDocumentManipulator;
 return [
     AssetsGateway::class => [
         "drivers"=>[
@@ -46,16 +50,33 @@ return [
                             "class"=>BannerImageManipulator::class
                         ],
                     ],
-                    "mimes"=>
-                        [
-                            "image/jpeg",
-                            "image/png",
-                            "image/gif"
-                        ]
+                    "mimes"=>ImageGateway::MIMES
                 ],
                 "class"=>ImageGateway::class
+            ],
+            GenericDocumentGateway::DOCUMENT_TYPE=>[
+                "config"=>[
+                    "default_manipulator"=>GenericDocumentManipulator::MANIPULATOR_NAME,
+                    "manipulators"=>[
+                        GenericDocumentManipulator::MANIPULATOR_NAME=>[
+                            'thumbnails'=>[
+                                GenericDocument::GENERIC=>["id"=>null,"url"=>"https://s3.amazonaws.com/attendee/documents/Document_Grey.png"],
+                                GenericDocument::WORD=>["id"=>null,"url"=>"https://s3.amazonaws.com/attendee/documents/Document_Blue.png"],
+                                GenericDocument::EXCEL=>["id"=>null,"url"=>"https://s3.amazonaws.com/attendee/documents/Icon_documents_large.png"]
+                            ],
+                            "mimes"=>[
+                                GenericDocument::WORD=>GenericDocument::WORD_MIMES,
+                                GenericDocument::EXCEL=>GenericDocument::EXCEL_MIMES
+                            ],
+                            "class"=>GenericDocumentManipulator::class
+                        ],
+                    ],
+                    "mimes"=>array_merge(GenericDocument::EXCEL_MIMES,GenericDocument::WORD_MIMES)
+                ],
+                "class"=>GenericDocumentGateway::class
             ]
-        ]
+        ],
+        "default_driver" => GenericDocumentGateway::DOCUMENT_TYPE
     ],
     FileGateway::class=>[
         'cloud_base_url'=>env('COULD_BASE_URL'),
@@ -67,3 +88,4 @@ return [
         'keep_local_copy'=>false
     ]
 ];
+

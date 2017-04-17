@@ -98,7 +98,7 @@ class ImageProfileManipulator implements Manipulator
         $validation = Validator::make($config,$validationRules);
         if($validation->fails())
         {
-            throw new ValidationFailed("Validation for ImageGateway config array failed.");
+            throw new ValidationFailed("Validation for ".self::class." config array failed.");
         }
         return $config;
     }

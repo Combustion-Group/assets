@@ -37,7 +37,7 @@ class Asset extends Model
     /**
      * @var array
      */
-    protected $with = ['document'];
+//    protected $with = ['document'];
     /**
      * @var array
      */

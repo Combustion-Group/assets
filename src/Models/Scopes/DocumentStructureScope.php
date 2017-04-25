@@ -28,7 +28,7 @@ class DocumentStructureScope implements Scope
         {
             // refer to model to see scopeWithFilesData(Builder $query)
             $builder
-                ->appendToSelect('images.*')
+                ->AlsoSelect('images.*')
                 ->WithFilesData()
                 ->PullSelectInQuery();
         }
@@ -37,7 +37,7 @@ class DocumentStructureScope implements Scope
         {
             // refer to model to see scopeWithFilesData(Builder $query)
             $builder
-                ->appendToSelect('microsoft_documents.*')
+                ->AlsoSelect('microsoft_documents.*')
                 ->WithFilesData()
                 ->PullSelectInQuery();
         }

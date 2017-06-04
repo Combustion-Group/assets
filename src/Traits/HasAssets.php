@@ -4,7 +4,10 @@ namespace Combustion\Assets\Traits;
 
 use Combustion\Assets\Contracts\HasAssetsInterface;
 use Combustion\Assets\Models\Asset;
+use Combustion\Assets\Models\GenericDocument;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Query\JoinClause;
 
 /**
  * Class HasAssets
@@ -77,6 +80,86 @@ trait HasAssets
             $primary_asset->pivot->save();
         }
         return true;
+    }
+
+    public function scopeWithOptimizedImages(Builder $query)
+    {
+        $classType=$this->getMorphClass();
+        $tableName=$this->getTable();
+        $query->leftJoin('resource_asset as resource_asset_table',function(JoinClause $join)use($classType,$tableName){
+            $join->on('resource_asset_table.resource_id',$tableName.'.id')
+                ->where('resource_asset_table.primary',true)
+                ->where('resource_asset_table.resource_type',$classType);
+        })
+            ->leftJoin('assets as assets_table',function(JoinClause $join){
+                $join->on('assets_table.id','resource_asset_table.asset_id')
+                    ->where('assets_table.document_type','image');
+            })
+            ->leftJoin('images as images_table',function(JoinClause $join){
+                $join->on('assets_table.document_id','images_table.id');
+            })
+            ->leftJoin('files as small_file_table',function(JoinClause $join){
+                $join->on('small_file_table.id','images_table.small_id');
+            })
+            ->leftJoin('files as original_file_table',function(JoinClause $join){
+                $join->on('original_file_table.id','images_table.image_id');
+            })
+            ->leftJoin('files as medium_file_table',function(JoinClause $join){
+                $join->on('medium_file_table.id','images_table.medium_id');
+            });
+        $this->appendToSelect("
+            CASE WHEN images_table.small_id <> 0
+                THEN small_file_table.url
+                ELSE NULL
+            END AS small_url");
+        $this->appendToSelect("
+            CASE WHEN images_table.image_id <> 0
+                THEN original_file_table.url
+                ELSE NULL
+            END AS original_url");
+        $this->appendToSelect("
+            CASE WHEN images_table.medium_id <> 0
+                THEN medium_file_table.url
+                ELSE NULL
+            END AS medium_url");
+    }
+
+    public function scopeDocumentData(Builder $query)
+    {
+        $classType=$this->getMorphClass();
+        $tableName=$this->getTable();
+        $this->appendToSelect($tableName.'.*');
+        $query->leftJoin('resource_asset as resource_asset_table',function(JoinClause $join)use($classType,$tableName){
+            $join->on('resource_asset_table.resource_id',$tableName.'.id')
+                ->where('resource_asset_table.primary',true)
+                ->where('resource_asset_table.resource_type',$classType);
+            })
+            ->leftJoin('assets as assets_table',function(JoinClause $join){
+                $join->on('assets_table.id','resource_asset_table.asset_id')
+                    ->where('assets_table.document_type',GenericDocument::class);
+            })
+            ->leftJoin(GenericDocument::TABLE_NAME.' as generic_document_table',function(JoinClause $join){
+                $join->on('assets_table.document_id','generic_document_table.id');
+            })
+            ->leftJoin('files as thumbnail_table',function(JoinClause $join){
+                $join->on('generic_document_table.'.GenericDocument::THUMBNAIL_ID,'thumbnail_table.id');
+            })
+            ->leftJoin('files as document_table',function(JoinClause $join){
+                $join->on('generic_document_table.'.GenericDocument::DOCUMENT_ID,'document_table.id');
+            });
+        // Thumbnail
+        $this->appendToSelect("thumbnail_table.id as thumbnail_file_id");
+        $this->appendToSelect("thumbnail_table.mime as thumbnail_file_mime");
+        $this->appendToSelect("thumbnail_table.original_name as thumbnail_file_original_name");
+        $this->appendToSelect("thumbnail_table.url as thumbnail_file_url");
+        $this->appendToSelect("thumbnail_table.extension as thumbnail_file_extension");
+        // Document
+        $this->appendToSelect("document_table.id as document_file_id");
+        $this->appendToSelect("document_table.mime as document_file_mime");
+        $this->appendToSelect("document_table.original_name as document_file_original_name");
+        $this->appendToSelect("document_table.url as document_file_url");
+        $this->appendToSelect("document_table.extension as document_file_extension");
+        $query->PullSelectInQuery();
     }
 
     /**

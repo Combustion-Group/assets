@@ -37,7 +37,7 @@ class DocumentStructureScope implements Scope
         {
             // refer to model to see scopeWithFilesData(Builder $query)
             $builder
-                ->AlsoSelect('microsoft_documents.*')
+                ->AlsoSelect(GenericDocument::TABLE_NAME.'.*')
                 ->WithFilesData()
                 ->PullSelectInQuery();
         }

@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Combustion\Assets\Models\GenericDocument;
 class CreateMicrosoftDocumentsTableAssets extends Migration
 {
     /**
@@ -10,7 +11,7 @@ class CreateMicrosoftDocumentsTableAssets extends Migration
      */
     public function up()
     {
-        Schema::create('microsoft_documents', function (Blueprint $table) {
+        Schema::create(GenericDocument::TABLE_NAME, function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->nullable();
             $table->integer('thumbnail_id')->unsigned();
@@ -29,6 +30,6 @@ class CreateMicrosoftDocumentsTableAssets extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('microsoft_documents');
+        Schema::dropIfExists(GenericDocument::TABLE_NAME);
     }
 }

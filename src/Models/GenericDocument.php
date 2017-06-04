@@ -20,6 +20,10 @@ class GenericDocument extends Model implements AssetDocumentInterface
 {
     use IsDocument,SoftDeletes;
 
+    const   TABLE_NAME      = 'microsoft_documents';
+    const   THUMBNAIL_ID    = 'thumbnail_id';
+    const   DOCUMENT_ID     = 'document_id';
+    const   TITLE           = 'title';
     const   WORD        = "word",
             EXCEL       = "excel",
             GENERIC     = "generic",
@@ -43,14 +47,14 @@ class GenericDocument extends Model implements AssetDocumentInterface
     /**
      * @var string
      */
-    protected $table = 'microsoft_documents';
+    protected $table = self::TABLE_NAME;
     /**
      * @var array
      */
     protected $fillable = [
-        'thumbnail_id',
-        'document_id',
-        'title',
+        self::THUMBNAIL_ID,
+        self::DOCUMENT_ID,
+        self::TITLE,
     ];
     /*
      * RELATIONSHIPS
@@ -96,11 +100,12 @@ class GenericDocument extends Model implements AssetDocumentInterface
      */
     public function scopeWithFilesData(Builder $query)
     {
-        $query->join('files as thumbnail_files_table',function(JoinClause $join){
-            $join->on("thumbnail_files_table.id","microsoft_documents.thumbnail_id");
+        $tableName = self::TABLE_NAME;
+        $query->join('files as thumbnail_files_table',function(JoinClause $join)use($tableName){
+            $join->on("thumbnail_files_table.id","$tableName.thumbnail_id");
         });
-        $query->join('files as document_files_table',function(JoinClause $join){
-            $join->on("document_files_table.id","microsoft_documents.document_id");
+        $query->join('files as document_files_table',function(JoinClause $join)use($tableName){
+            $join->on("document_files_table.id","$tableName.document_id");
         });
         // Thumbnail
         $this->appendToSelect("thumbnail_files_table.id as thumbnail_file_id");

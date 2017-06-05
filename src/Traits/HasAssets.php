@@ -5,6 +5,7 @@ namespace Combustion\Assets\Traits;
 use Combustion\Assets\Contracts\HasAssetsInterface;
 use Combustion\Assets\Models\Asset;
 use Combustion\Assets\Models\GenericDocument;
+use Combustion\Assets\Models\Image;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Query\JoinClause;
@@ -82,10 +83,14 @@ trait HasAssets
         return true;
     }
 
+    /**
+     * @param Builder $query
+     */
     public function scopeWithOptimizedImages(Builder $query)
     {
         $classType=$this->getMorphClass();
         $tableName=$this->getTable();
+        $this->appendToSelect($tableName.'.*');
         $query->leftJoin('resource_asset as resource_asset_table',function(JoinClause $join)use($classType,$tableName){
             $join->on('resource_asset_table.resource_id',$tableName.'.id')
                 ->where('resource_asset_table.primary',true)
@@ -93,10 +98,13 @@ trait HasAssets
         })
             ->leftJoin('assets as assets_table',function(JoinClause $join){
                 $join->on('assets_table.id','resource_asset_table.asset_id')
-                    ->where('assets_table.document_type','image');
+                    ->where('assets_table.document_type',Image::class);
             })
             ->leftJoin('images as images_table',function(JoinClause $join){
                 $join->on('assets_table.document_id','images_table.id');
+            })
+            ->leftJoin('files as large_file_table',function(JoinClause $join){
+                $join->on('large_file_table.id','images_table.large_id');
             })
             ->leftJoin('files as small_file_table',function(JoinClause $join){
                 $join->on('small_file_table.id','images_table.small_id');
@@ -107,21 +115,31 @@ trait HasAssets
             ->leftJoin('files as medium_file_table',function(JoinClause $join){
                 $join->on('medium_file_table.id','images_table.medium_id');
             });
-        $this->appendToSelect("
-            CASE WHEN images_table.small_id <> 0
-                THEN small_file_table.url
-                ELSE NULL
-            END AS small_url");
-        $this->appendToSelect("
-            CASE WHEN images_table.image_id <> 0
-                THEN original_file_table.url
-                ELSE NULL
-            END AS original_url");
-        $this->appendToSelect("
-            CASE WHEN images_table.medium_id <> 0
-                THEN medium_file_table.url
-                ELSE NULL
-            END AS medium_url");
+        // Large
+        $this->appendToSelect("large_file_table.id as large_file_id");
+        $this->appendToSelect("large_file_table.mime as large_file_mime");
+        $this->appendToSelect("large_file_table.original_name as large_file_original_name");
+        $this->appendToSelect("large_file_table.url as large_file_url");
+        $this->appendToSelect("large_file_table.extension as large_file_extension");
+        // Meium
+        $this->appendToSelect("medium_file_table.id as medium_file_id");
+        $this->appendToSelect("medium_file_table.mime as medium_file_mime");
+        $this->appendToSelect("medium_file_table.original_name as medium_file_original_name");
+        $this->appendToSelect("medium_file_table.url as medium_file_url");
+        $this->appendToSelect("medium_file_table.extension as medium_file_extension");
+        // Small
+        $this->appendToSelect("small_file_table.id as small_file_id");
+        $this->appendToSelect("small_file_table.mime as small_file_mime");
+        $this->appendToSelect("small_file_table.original_name as small_file_original_name");
+        $this->appendToSelect("small_file_table.url as small_file_url");
+        $this->appendToSelect("small_file_table.extension as small_file_extension");
+        // Original
+        $this->appendToSelect("original_file_table.id as original_file_id");
+        $this->appendToSelect("original_file_table.mime as original_file_mime");
+        $this->appendToSelect("original_file_table.original_name as original_file_original_name");
+        $this->appendToSelect("original_file_table.url as original_file_url");
+        $this->appendToSelect("original_file_table.extension as original_file_extension");
+        $query->PullSelectInQuery();
     }
 
     public function scopeDocumentData(Builder $query)

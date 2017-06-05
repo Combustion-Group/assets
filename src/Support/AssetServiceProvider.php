@@ -6,6 +6,7 @@ use Combustion\Assets\FileGateway;
 use Combustion\Assets\GenericDocumentGateway;
 use Combustion\Assets\ImageGateway;
 use Combustion\Assets\Manipulators\Generic\GenericDocumentManipulator;
+use Combustion\Assets\Manipulators\Images\CompanyLogoManipulator;
 use Combustion\Assets\Manipulators\Images\ImageProfileManipulator;
 use Combustion\Assets\Manipulators\Images\BannerImageManipulator;
 use Illuminate\Support\Facades\Storage;
@@ -99,6 +100,12 @@ class AssetServiceProvider extends ServiceProvider
         $this->app->singleton(GenericDocumentManipulator::class, function (Application $app, array $params = []) {
             $config = $app['config']['assets'][AssetsGateway::class]['drivers'][GenericDocumentGateway::DOCUMENT_TYPE]['config']['manipulators'][GenericDocumentManipulator::MANIPULATOR_NAME];
             return new GenericDocumentManipulator(
+                $config
+            );
+        });
+        $this->app->singleton(CompanyLogoManipulator::class, function (Application $app, array $params = []) {
+            $config = $app['config']['assets'][AssetsGateway::class]['drivers'][ImageGateway::DOCUMENT_TYPE]['config']['manipulators'][CompanyLogoManipulator::MANIPULATOR_NAME];
+            return new CompanyLogoManipulator(
                 $config
             );
         });

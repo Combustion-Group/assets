@@ -70,7 +70,6 @@ class GenericDocumentGateway extends DocumentsGateway
         $title = isset($options['title']) ? $options['title'] : $document->getAttribute('original_name');
         $documentData = [
             'title'         => $title,
-            'slug'          => time().$title,
             'thumbnail_id'  => $thumbnailId,
             'document_id'   => $document->getAttribute('id')
         ];

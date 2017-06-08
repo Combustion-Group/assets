@@ -85,7 +85,6 @@ class ImageGateway extends DocumentsGateway
         }
         $imageModelData = [
             'title'      => $imageBag['original']['name'],
-            'slug'       => time().$imageBag['original']['name'],
             'image_id'   => $imageBag['original']['model']->id,
             'large_id'   => $imageBag['large']['model']->id,
             'small_id'   => $imageBag['small']['model']->id,

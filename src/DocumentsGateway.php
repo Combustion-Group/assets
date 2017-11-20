@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets;
 
 use Combustion\Assets\Contracts\AssetDocumentInterface;
@@ -19,25 +20,26 @@ abstract class DocumentsGateway
      * @var
      */
     protected $manipulators;
+
     /**
      * @param \Illuminate\Http\UploadedFile $file
-     * @param array                         $options
+     * @param array $options
      *
      * @return \Combustion\Assets\Contracts\AssetDocumentInterface
      */
-    public abstract function create(UploadedFile $file, array $options = []) : AssetDocumentInterface;
+    public abstract function create(UploadedFile $file, array $options = []): AssetDocumentInterface;
 
     /**
      * @param int $documentId
      *
      * @return \Combustion\Assets\Contracts\AssetDocumentInterface
      */
-    public abstract function getOrFail(int $documentId) : AssetDocumentInterface;
+    public abstract function getOrFail(int $documentId): AssetDocumentInterface;
 
     /**
      * @return array
      */
-    public abstract function getConfig() : array;
+    public abstract function getConfig(): array;
 
     /**
      * @param array|null $options
@@ -45,14 +47,14 @@ abstract class DocumentsGateway
      * @return \Combustion\Assets\Contracts\Manipulator
      * @throws \Combustion\Assets\Exceptions\ModelMustHaveHasAssetsTrait
      */
-    public function getManipulator(array $options=[]) : Manipulator
+    public function getManipulator(array $options = []): Manipulator
     {
         // if model is not sent return default manipulator
-        if(!isset($options['model']))return $this->manipulators[$this->config['default_manipulator']];
+        if (!isset($options['model'])) return $this->manipulators[$this->config['default_manipulator']];
         // if it was sent make sure it has the HasAssets trait otherwise throw exception
-        if(!isset(class_uses($options['model'])[HasAssets::class])) throw new ModelMustHaveHasAssetsTrait(get_class($options['model'])." does not have HasAssets trait");
+        if (!isset(class_uses($options['model'])[HasAssets::class])) throw new ModelMustHaveHasAssetsTrait(get_class($options['model']) . " does not have HasAssets trait");
         // if the method does exist return getManipulator from model
-        if(method_exists($options['model'],'getManipulator')) return $this->manipulators[$options['model']->getManipulator()];
+        if (method_exists($options['model'], 'getManipulator')) return $this->manipulators[$options['model']->getManipulator()];
         // otherwise return default manipulator again
         return $this->manipulators[$this->config['default_manipulator']];
     }
@@ -90,13 +92,13 @@ abstract class DocumentsGateway
      *
      * @return \Illuminate\Http\UploadedFile
      */
-    public function moveToLocalDisk(UploadedFile $file) : UploadedFile
+    public function moveToLocalDisk(UploadedFile $file): UploadedFile
     {
         $disk = $this->localDriver;
-        $newFileName=md5(time().$file->getClientOriginalName());
-        $fileDestination = $this->fileGateway->getConfig()['local_document_folder_name'].'/'.$newFileName.'.'.$file->getClientOriginalExtension();
-        $fileLocation = $this->fileGateway->getConfig()['local_document_folder'].'/'.$newFileName.'.'.$file->getClientOriginalExtension();
+        $newFileName = md5(time() . $file->getClientOriginalName());
+        $fileDestination = $this->fileGateway->getConfig()['local_document_folder_name'] . '/' . $newFileName . '.' . $file->getClientOriginalExtension();
+        $fileLocation = $this->fileGateway->getConfig()['local_document_folder'] . '/' . $newFileName . '.' . $file->getClientOriginalExtension();
         $disk->put($fileDestination, file_get_contents($file));
-        return new UploadedFile($fileLocation,$newFileName,$file->getClientMimeType());
+        return new UploadedFile($fileLocation, $newFileName, $file->getClientMimeType());
     }
 }

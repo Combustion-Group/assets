@@ -20,12 +20,11 @@ class DocumentStructureScope implements Scope
 {
     /**
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param \Illuminate\Database\Eloquent\Model   $model
+     * @param \Illuminate\Database\Eloquent\Model $model
      */
     public function apply(Builder $builder, Model $model)
     {
-        if($model instanceof Image)
-        {
+        if ($model instanceof Image) {
             // refer to model to see scopeWithFilesData(Builder $query)
             $builder
                 ->AlsoSelect('images.*')
@@ -33,11 +32,10 @@ class DocumentStructureScope implements Scope
                 ->PullSelectInQuery();
         }
 
-        if($model instanceof GenericDocument)
-        {
+        if ($model instanceof GenericDocument) {
             // refer to model to see scopeWithFilesData(Builder $query)
             $builder
-                ->AlsoSelect(GenericDocument::TABLE_NAME.'.*')
+                ->AlsoSelect(GenericDocument::TABLE_NAME . '.*')
                 ->WithFilesData()
                 ->PullSelectInQuery();
         }

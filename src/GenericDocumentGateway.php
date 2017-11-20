@@ -38,49 +38,49 @@ class GenericDocumentGateway extends DocumentsGateway
     /**
      * Mime type will be empty since this gateway will upload any document
      */
-    const   DOCUMENT_TYPE   = 'documents';
+    const   DOCUMENT_TYPE = 'documents';
 
 
-
-    public function __construct(array $config, FileGateway $fileGateway, FilesystemAdapter $localDriver,array $manipulators)
+    public function __construct(array $config, FileGateway $fileGateway, FilesystemAdapter $localDriver, array $manipulators)
     {
-        $this->fileGateway  = $fileGateway;
-        $this->localDriver  = $localDriver;
-        $this->config       = $this->validatesConfig($config);
+        $this->fileGateway = $fileGateway;
+        $this->localDriver = $localDriver;
+        $this->config = $this->validatesConfig($config);
         $this->manipulators = $manipulators;
     }
 
 
     /**
      * @param \Illuminate\Http\UploadedFile $file
-     * @param array                         $options
+     * @param array $options
      *
      * @return \Combustion\Assets\Contracts\AssetDocumentInterface
      */
-    public function create(UploadedFile $file, array $options = []) : AssetDocumentInterface
+    public function create(UploadedFile $file, array $options = []): AssetDocumentInterface
     {
         // get Document manipulators and pass the options
         $manipulator = $this->getManipulator($options);
         // manipulate document as needed
-        $filesBag = $manipulator->manipulate($this->moveToLocalDisk($file),$options);
+        $filesBag = $manipulator->manipulate($this->moveToLocalDisk($file), $options);
         // get thumbnail file id
         $thumbnailId = is_null($filesBag['thumbnail']['file']) ? $filesBag['thumbnail']['id'] : $this->fileGateway->createFile($filesBag['thumbnail']['file'])->getAttribute('id');
         // get document file id
         $document = $this->fileGateway->createFile($filesBag['document']['file']);
         $title = isset($options['title']) ? $options['title'] : $document->getAttribute('original_name');
         $documentData = [
-            'title'         => $title,
-            'thumbnail_id'  => $thumbnailId,
-            'document_id'   => $document->getAttribute('id')
+            'title' => $title,
+            'thumbnail_id' => $thumbnailId,
+            'document_id' => $document->getAttribute('id')
         ];
         return GenericDocument::create($documentData);
     }
+
     /**
      * @param int $imageId
      *
      * @return \Combustion\Assets\Contracts\AssetDocumentInterface
      */
-    public function getOrFail(int $imageId) :  AssetDocumentInterface
+    public function getOrFail(int $imageId): AssetDocumentInterface
     {
         // TODO: Implement getOrFail() method.
     }
@@ -88,7 +88,7 @@ class GenericDocumentGateway extends DocumentsGateway
     /**
      * @return array
      */
-    public function getConfig() :  array
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -99,18 +99,17 @@ class GenericDocumentGateway extends DocumentsGateway
      * @return array
      * @throws \Combustion\Assets\Exceptions\ValidationFailed
      */
-    public function validatesConfig(array $config) : array
+    public function validatesConfig(array $config): array
     {
         $validationRules = [
-            "mimes"     => "required|array",
-            "mimes.*"   => "required|string",
+            "mimes" => "required|array",
+            "mimes.*" => "required|string",
             "manipulators" => "required|array",
             "default_manipulator" => "required|string",
         ];
-        $validation = Validator::make($config,$validationRules);
-        if($validation->fails())
-        {
-            throw new ValidationFailed("Validation for ".self::class." config array failed.");
+        $validation = Validator::make($config, $validationRules);
+        if ($validation->fails()) {
+            throw new ValidationFailed("Validation for " . self::class . " config array failed.");
         }
         return $config;
     }

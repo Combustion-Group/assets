@@ -31,17 +31,17 @@ class CompanyLogoManipulator implements Manipulator
      */
     public function __construct(array $config)
     {
-        $this->config  = $this->validatesConfig($config);
+        $this->config = $this->validatesConfig($config);
     }
 
 
     /**
      * @param \Illuminate\Http\UploadedFile $file
-     * @param array                         $options
+     * @param array $options
      *
      * @return array
      */
-    public function manipulate(UploadedFile $file, array $options=[]) : array
+    public function manipulate(UploadedFile $file, array $options = []): array
     {
         $dimensions = $this->checkForDimensions($options);
         // get name
@@ -50,22 +50,21 @@ class CompanyLogoManipulator implements Manipulator
         $extension = $file->getExtension();
         // create image bag and add original data
         $imageBag = [
-            'original' => ['folder' => $path,'name' => $name,'extension' => $extension]
+            'original' => ['folder' => $path, 'name' => $name, 'extension' => $extension]
         ];
-        $image = Image::make($path.'/'.$name.'.'.$extension);
-        $image->crop($dimensions['width'],$dimensions['height'],$dimensions['x'],$dimensions['y'])->save($path.'/'.$name.'.'.$extension);
-        foreach ($this->config['sizes'] as $size => $imageSize)
-        {
+        $image = Image::make($path . '/' . $name . '.' . $extension);
+        $image->crop($dimensions['width'], $dimensions['height'], $dimensions['x'], $dimensions['y'])->save($path . '/' . $name . '.' . $extension);
+        foreach ($this->config['sizes'] as $size => $imageSize) {
             // get name
-            $sizeName = md5(time().$size.'-'.$file->getClientOriginalName());
+            $sizeName = md5(time() . $size . '-' . $file->getClientOriginalName());
             // append size to the name
-            $imagePath = $path.'/'.$sizeName.'.'.$extension;
+            $imagePath = $path . '/' . $sizeName . '.' . $extension;
             // make data for array
-            $imageData = [$size => ['folder' => $path,'name' => $sizeName,'extension' => $extension]];
+            $imageData = [$size => ['folder' => $path, 'name' => $sizeName, 'extension' => $extension]];
             // push data in
-            $imageBag = array_merge($imageBag,$imageData);
+            $imageBag = array_merge($imageBag, $imageData);
             // manipulate image
-            $image->fit($imageSize['x'],$imageSize['y'], function (Constraint $constraint) {
+            $image->fit($imageSize['x'], $imageSize['y'], function (Constraint $constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
                 // save once done
@@ -80,18 +79,17 @@ class CompanyLogoManipulator implements Manipulator
      * @return array
      * @throws \Combustion\Assets\Exceptions\ValidationFailed
      */
-    public function validatesConfig(array $config) : array
+    public function validatesConfig(array $config): array
     {
         $validationRules = [
-            "sizes"     => "required|array",
-            "sizes.*"   => "required|array",
-            "sizes.*.y"   => "required|numeric|nullable",
-            "sizes.*.x"   => "required|numeric|nullable",
+            "sizes" => "required|array",
+            "sizes.*" => "required|array",
+            "sizes.*.y" => "required|numeric|nullable",
+            "sizes.*.x" => "required|numeric|nullable",
         ];
-        $validation = Validator::make($config,$validationRules);
-        if($validation->fails())
-        {
-            throw new ValidationFailed("Validation for ".self::class." config array failed.");
+        $validation = Validator::make($config, $validationRules);
+        if ($validation->fails()) {
+            throw new ValidationFailed("Validation for " . self::class . " config array failed.");
         }
         return $config;
     }
@@ -103,19 +101,19 @@ class CompanyLogoManipulator implements Manipulator
      * @return array
      * @throws \Combustion\Assets\Exceptions\ImageDimensionsAreInvalid
      */
-    private function checkForDimensions(array $options) : array
+    private function checkForDimensions(array $options): array
     {
         // extract data needed
-        $data=[
-            'width'=>isset($options['width'])?$options['width']:0,
-            'height'=>isset($options['height'])?$options['height']:0,
-            'x'=>isset($options['x'])?$options['x']:0,
-            'y'=>isset($options['y'])?$options['y']:0,
+        $data = [
+            'width' => isset($options['width']) ? $options['width'] : 0,
+            'height' => isset($options['height']) ? $options['height'] : 0,
+            'x' => isset($options['x']) ? $options['x'] : 0,
+            'y' => isset($options['y']) ? $options['y'] : 0,
         ];
         // check for invalid values
-        foreach ($data as $coordinates=>$value) {
-            if($value===0){
-                throw new ImageDimensionsAreInvalid(ucfirst($coordinates)." cannot be empty or have a value of 0");
+        foreach ($data as $coordinates => $value) {
+            if ($value === 0) {
+                throw new ImageDimensionsAreInvalid(ucfirst($coordinates) . " cannot be empty or have a value of 0");
             }
         }
         // check aspect ratio
@@ -127,19 +125,18 @@ class CompanyLogoManipulator implements Manipulator
     }
 
     /**
-     * @param int    $width
-     * @param int    $height
+     * @param int $width
+     * @param int $height
      * @param string $ratio
      *
      * @return bool
      */
-    private function checkForAspectRatio(int $width, int $height, string $ratio) : bool
+    private function checkForAspectRatio(int $width, int $height, string $ratio): bool
     {
         // default to 4:4
         $decimalRatio = 1;
         // which aspect ratio are we checking for
-        switch($ratio)
-        {
+        switch ($ratio) {
             case "16:9":
                 $decimalRatio = .5625;
                 break;
@@ -148,12 +145,9 @@ class CompanyLogoManipulator implements Manipulator
                 break;
         }
         // default to 4:4 and check if its the right aspect ratio
-        if($width*$decimalRatio==$height)
-        {
+        if ($width * $decimalRatio == $height) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

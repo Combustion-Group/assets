@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets\Models;
 
 
@@ -33,7 +34,7 @@ class File extends Model
     /**
      * @return array
      */
-    public function validationRules() : array
+    public function validationRules(): array
     {
         return [
             'mime' => 'required|string',

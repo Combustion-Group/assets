@@ -18,31 +18,31 @@ use Illuminate\Database\Query\JoinClause;
  */
 class GenericDocument extends Model implements AssetDocumentInterface
 {
-    use IsDocument,SoftDeletes;
+    use IsDocument, SoftDeletes;
 
-    const   TABLE_NAME      = 'microsoft_documents';
-    const   THUMBNAIL_ID    = 'thumbnail_id';
-    const   DOCUMENT_ID     = 'document_id';
-    const   TITLE           = 'title';
-    const   WORD        = "word",
-            EXCEL       = "excel",
-            GENERIC     = "generic",
-            WORD_MIMES  =   [
-                                "application/msword",
-                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
-                                "application/vnd.ms-word.document.macroEnabled.12",
-                                "application/vnd.ms-word.template.macroEnabled.12",
-                            ],
-            EXCEL_MIMES =   [
-                                "application/vnd.ms-excel",
-                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
-                                "application/vnd.ms-excel.sheet.macroEnabled.12",
-                                "application/vnd.ms-excel.template.macroEnabled.12",
-                                "application/vnd.ms-excel.addin.macroEnabled.12",
-                                "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
-                            ];
+    const   TABLE_NAME = 'microsoft_documents';
+    const   THUMBNAIL_ID = 'thumbnail_id';
+    const   DOCUMENT_ID = 'document_id';
+    const   TITLE = 'title';
+    const   WORD = "word",
+        EXCEL = "excel",
+        GENERIC = "generic",
+        WORD_MIMES = [
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "application/vnd.ms-word.document.macroEnabled.12",
+        "application/vnd.ms-word.template.macroEnabled.12",
+    ],
+        EXCEL_MIMES = [
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+        "application/vnd.ms-excel.sheet.macroEnabled.12",
+        "application/vnd.ms-excel.template.macroEnabled.12",
+        "application/vnd.ms-excel.addin.macroEnabled.12",
+        "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+    ];
 
     /**
      * @var string
@@ -72,7 +72,7 @@ class GenericDocument extends Model implements AssetDocumentInterface
     /**
      * @return int
      */
-    public function getId() : int
+    public function getId(): int
     {
         return (int)$this->id;
     }
@@ -82,7 +82,7 @@ class GenericDocument extends Model implements AssetDocumentInterface
      */
     public function thumbnail_file()
     {
-        return $this->hasOne(File::class,'id','thumbnail_id');
+        return $this->hasOne(File::class, 'id', 'thumbnail_id');
     }
 
     /**
@@ -90,7 +90,7 @@ class GenericDocument extends Model implements AssetDocumentInterface
      */
     public function document_file()
     {
-        return $this->hasOne(File::class,'id','document_id');
+        return $this->hasOne(File::class, 'id', 'document_id');
     }
 
     // Scopes to pull in data on the same level
@@ -101,11 +101,11 @@ class GenericDocument extends Model implements AssetDocumentInterface
     public function scopeWithFilesData(Builder $query)
     {
         $tableName = self::TABLE_NAME;
-        $query->join('files as thumbnail_files_table',function(JoinClause $join)use($tableName){
-            $join->on("thumbnail_files_table.id","$tableName.thumbnail_id");
+        $query->join('files as thumbnail_files_table', function (JoinClause $join) use ($tableName) {
+            $join->on("thumbnail_files_table.id", "$tableName.thumbnail_id");
         });
-        $query->join('files as document_files_table',function(JoinClause $join)use($tableName){
-            $join->on("document_files_table.id","$tableName.document_id");
+        $query->join('files as document_files_table', function (JoinClause $join) use ($tableName) {
+            $join->on("document_files_table.id", "$tableName.document_id");
         });
         // Thumbnail
         $this->appendToSelect("thumbnail_files_table.id as thumbnail_file_id");

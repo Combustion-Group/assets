@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets\Exceptions;
 
 
@@ -8,4 +9,6 @@ namespace Combustion\Assets\Exceptions;
  * @package Combustion\Assets\Exceptions
  * @author Luis A. Perez <lperez@combustiongroup.com>
  */
-class FileCouldNotBeMovedToCloud extends \Exception{}
+class FileCouldNotBeMovedToCloud extends \Exception
+{
+}

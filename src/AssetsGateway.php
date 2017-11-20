@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets;
 
 use Combustion\Assets\Contracts\HasAssetsInterface;
@@ -32,22 +33,22 @@ class AssetsGateway
      */
     public function __construct(array $config, array $drivers)
     {
-        $this->config  = $this->validatesConfig($config);
+        $this->config = $this->validatesConfig($config);
         $this->drivers = $this->validateDrivers($drivers);
     }
 
     /**
      * @param \Illuminate\Http\UploadedFile $file
-     * @param array                         $options
+     * @param array $options
      *
      * @return \Combustion\Assets\Models\Asset
      */
-    public function createAsset(UploadedFile $file, array $options=[]) : Asset
+    public function createAsset(UploadedFile $file, array $options = []): Asset
     {
         // what type of asset is it
         $driver = $this->getDriver($file);
         // call create on gateway for whatever
-        $document = $driver->create($file,$options);
+        $document = $driver->create($file, $options);
         // get fresh asset
         $asset = $this->newAsset();
         // attach document to asset
@@ -58,16 +59,16 @@ class AssetsGateway
 
     /**
      * @param \Combustion\Assets\Contracts\HasAssetsInterface $model
-     * @param \Illuminate\Http\UploadedFile                                        $file
-     * @param array                                                                $options
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param array $options
      *
      * @return \Combustion\Assets\Contracts\HasAssetsInterface
      */
-    public function attachPrimaryAssetTo(HasAssetsInterface $model, UploadedFile $file, array $options=[]) : HasAssetsInterface
+    public function attachPrimaryAssetTo(HasAssetsInterface $model, UploadedFile $file, array $options = []): HasAssetsInterface
     {
-        $options['model']=$model;
-        $asset = $this->createAsset($file,$options);
-        $model->attachAsset($asset,true);
+        $options['model'] = $model;
+        $asset = $this->createAsset($file, $options);
+        $model->attachAsset($asset, true);
         return $model;
     }
 
@@ -76,7 +77,7 @@ class AssetsGateway
      *
      * @return \Combustion\Assets\Models\Asset
      */
-    private function newAsset(array $attributes = []) : Asset
+    private function newAsset(array $attributes = []): Asset
     {
         return Asset::create($attributes);
     }
@@ -88,12 +89,11 @@ class AssetsGateway
      * @return \Combustion\Assets\DocumentsGateway
      * @throws \Combustion\Assets\Exceptions\AssetDriverNotFound
      */
-    private function getDriver(UploadedFile $file) : DocumentsGateway
+    private function getDriver(UploadedFile $file): DocumentsGateway
     {
         $mimeType = $file->getClientMimeType() == "application/octet-stream" ? $file->getMimeType() : $file->getClientMimeType();
-        foreach ($this->drivers as $driver)
-        {
-            if(in_array($mimeType,$driver->getConfig()['mimes']))return $driver;
+        foreach ($this->drivers as $driver) {
+            if (in_array($mimeType, $driver->getConfig()['mimes'])) return $driver;
         }
         return $this->getDefaultDriver();
 //        throw new AssetDriverNotFound("Driver for mime type $mimeType was not found.");
@@ -109,7 +109,7 @@ class AssetsGateway
      *
      * @return array
      */
-    public function validatesConfig(array $config) : array
+    public function validatesConfig(array $config): array
     {
         // no need to validate for now
         return $config;
@@ -122,12 +122,10 @@ class AssetsGateway
      * @return array
      * @throws \Combustion\Assets\Exceptions\ValidationFailed
      */
-    public function validateDrivers(array $drivers) : array
+    public function validateDrivers(array $drivers): array
     {
-        foreach ($drivers as $driverName => $driver)
-        {
-            if(!$driver instanceof DocumentsGateway)
-            {
+        foreach ($drivers as $driverName => $driver) {
+            if (!$driver instanceof DocumentsGateway) {
                 throw new ValidationFailed("Driver $driverName needs to extend the DocumentsGateway");
             }
         }

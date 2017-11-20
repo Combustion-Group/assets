@@ -2,6 +2,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Combustion\Assets\Models\GenericDocument;
+
 class CreateMicrosoftDocumentsTableAssets extends Migration
 {
     /**

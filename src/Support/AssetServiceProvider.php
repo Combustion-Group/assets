@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets\Support;
 
 use Combustion\Assets\AssetsGateway;
@@ -26,7 +27,7 @@ class AssetServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../Migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../Migrations');
     }
 
 
@@ -39,7 +40,7 @@ class AssetServiceProvider extends ServiceProvider
             $config = $app['config']['assets'][AssetsGateway::class];
             // build drivers array
             $drivers = array();
-            foreach ($config['drivers'] as $driverName  => $driverInfo) {
+            foreach ($config['drivers'] as $driverName => $driverInfo) {
                 $drivers[$driverName] = $app->make($driverInfo['class']);
             }
             return new AssetsGateway(
@@ -52,7 +53,7 @@ class AssetServiceProvider extends ServiceProvider
             $config = $app['config']['assets'][AssetsGateway::class]['drivers'][ImageGateway::DOCUMENT_TYPE]['config'];
             // build drivers array
             $manipulators = array();
-            foreach ($config['manipulators'] as $manipulatorName  => $driverInfo) {
+            foreach ($config['manipulators'] as $manipulatorName => $driverInfo) {
                 $manipulators[$manipulatorName] = $app->make($driverInfo['class']);
             }
             return new ImageGateway(
@@ -66,7 +67,7 @@ class AssetServiceProvider extends ServiceProvider
             $config = $app['config']['assets'][AssetsGateway::class]['drivers'][GenericDocumentGateway::DOCUMENT_TYPE]['config'];
             // build drivers array
             $manipulators = array();
-            foreach ($config['manipulators'] as $manipulatorName  => $driverInfo) {
+            foreach ($config['manipulators'] as $manipulatorName => $driverInfo) {
                 $manipulators[$manipulatorName] = $app->make($driverInfo['class']);
             }
             return new GenericDocumentGateway(

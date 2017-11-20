@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets\Models;
 
 use Combustion\Assets\Contracts\AssetDocumentInterface;
@@ -17,7 +18,7 @@ use Illuminate\Database\Query\JoinClause;
  */
 class Image extends Model implements AssetDocumentInterface
 {
-    use IsDocument,SoftDeletes;
+    use IsDocument, SoftDeletes;
 
     /**
      * @var string
@@ -51,7 +52,7 @@ class Image extends Model implements AssetDocumentInterface
     /**
      * @return int
      */
-    public function getId() : int
+    public function getId(): int
     {
         return (int)$this->id;
     }
@@ -61,7 +62,7 @@ class Image extends Model implements AssetDocumentInterface
      */
     public function image_file()
     {
-        return $this->hasOne(File::class,'id','image_id');
+        return $this->hasOne(File::class, 'id', 'image_id');
     }
 
     /**
@@ -69,7 +70,7 @@ class Image extends Model implements AssetDocumentInterface
      */
     public function small_file()
     {
-        return $this->hasOne(File::class,'id','small_id');
+        return $this->hasOne(File::class, 'id', 'small_id');
     }
 
     /**
@@ -77,7 +78,7 @@ class Image extends Model implements AssetDocumentInterface
      */
     public function medium_file()
     {
-        return $this->hasOne(File::class,'id','medium_id');
+        return $this->hasOne(File::class, 'id', 'medium_id');
     }
 
     /**
@@ -85,9 +86,9 @@ class Image extends Model implements AssetDocumentInterface
      */
     public function large_file()
     {
-        return $this->hasOne(File::class,'id','large_id');
+        return $this->hasOne(File::class, 'id', 'large_id');
     }
-    
+
     // Scopes to pull in data on the same level
 
     /**
@@ -95,17 +96,17 @@ class Image extends Model implements AssetDocumentInterface
      */
     public function scopeWithFilesData(Builder $query)
     {
-        $query->join('files as small_files_table',function(JoinClause $join){
-            $join->on("small_files_table.id","images.small_id");
+        $query->join('files as small_files_table', function (JoinClause $join) {
+            $join->on("small_files_table.id", "images.small_id");
         });
-        $query->join('files as medium_files_table',function(JoinClause $join){
-            $join->on("medium_files_table.id","images.medium_id");
+        $query->join('files as medium_files_table', function (JoinClause $join) {
+            $join->on("medium_files_table.id", "images.medium_id");
         });
-        $query->join('files as large_files_table',function(JoinClause $join){
-            $join->on("large_files_table.id","images.large_id");
+        $query->join('files as large_files_table', function (JoinClause $join) {
+            $join->on("large_files_table.id", "images.large_id");
         });
-        $query->join('files as original_files_table',function(JoinClause $join){
-            $join->on("original_files_table.id","images.image_id");
+        $query->join('files as original_files_table', function (JoinClause $join) {
+            $join->on("original_files_table.id", "images.image_id");
         });
         // small
         $this->appendToSelect("small_files_table.id as small_file_id");

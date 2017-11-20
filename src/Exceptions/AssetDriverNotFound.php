@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets\Exceptions;
 
 /**
@@ -7,4 +8,6 @@ namespace Combustion\Assets\Exceptions;
  * @package Combustion\Assets\Exceptions
  * @author Luis A. Perez <lperez@combustiongroup.com>
  */
-class AssetDriverNotFound extends \Exception{}
+class AssetDriverNotFound extends \Exception
+{
+}

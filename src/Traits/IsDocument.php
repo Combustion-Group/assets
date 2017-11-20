@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets\Traits;
 
 
@@ -16,22 +17,21 @@ trait IsDocument
     /**
      * Documents can belong to many assets
      */
-    public function asset() : MorphMany
+    public function asset(): MorphMany
     {
-        return $this->morphMany(Asset::class,'document','document_type');
+        return $this->morphMany(Asset::class, 'document', 'document_type');
     }
 
     /**
      * @param Asset $asset
      * @return Asset
      */
-    public function attachToAsset(Asset $asset) : Asset
+    public function attachToAsset(Asset $asset): Asset
     {
         // pull resource
         $document = $this;
         // if resource already has asset
-        if($document->hasAsset($asset))
-        {
+        if ($document->hasAsset($asset)) {
             // return resource
             return $asset;
         }
@@ -48,11 +48,9 @@ trait IsDocument
     {
         $resource = $this;
         // for each asset
-        foreach($resource->asset as $resource_asset)
-        {
+        foreach ($resource->asset as $resource_asset) {
             // if it exists
-            if($resource_asset->id == $asset->id)
-            {
+            if ($resource_asset->id == $asset->id) {
                 return true;
             }
         }

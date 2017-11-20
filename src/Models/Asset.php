@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets\Models;
 
 use Combustion\StandardLib\Models\Model;
@@ -41,7 +42,7 @@ class Asset extends Model
     /**
      * @var array
      */
-    protected $casts = ['image_files'=>'array'];
+    protected $casts = ['image_files' => 'array'];
 
     /*
      * RELATIONSHIPS
@@ -66,31 +67,31 @@ class Asset extends Model
      */
     public function scopeWithDocumentData(Builder $query)
     {
-        $imageClass=Image::class;
+        $imageClass = Image::class;
         // Images join
-        $query->leftJoin('images as images_table',function(JoinClause $join)use($imageClass){
-           $join->on('images_table.id','assets.document_id')
-               ->where('assets.document_type',$imageClass);
+        $query->leftJoin('images as images_table', function (JoinClause $join) use ($imageClass) {
+            $join->on('images_table.id', 'assets.document_id')
+                ->where('assets.document_type', $imageClass);
         });
         // small image
-        $query->leftJoin('files as small_files_table',function(JoinClause $join)use($imageClass){
-           $join->on('images_table.small_id','small_files_table.id')
-               ->where('assets.document_type',$imageClass);
+        $query->leftJoin('files as small_files_table', function (JoinClause $join) use ($imageClass) {
+            $join->on('images_table.small_id', 'small_files_table.id')
+                ->where('assets.document_type', $imageClass);
         });
         // medium image
-        $query->leftJoin('files as medium_files_table',function(JoinClause $join)use($imageClass){
-           $join->on('images_table.medium_id','medium_files_table.id')
-               ->where('assets.document_type',$imageClass);
+        $query->leftJoin('files as medium_files_table', function (JoinClause $join) use ($imageClass) {
+            $join->on('images_table.medium_id', 'medium_files_table.id')
+                ->where('assets.document_type', $imageClass);
         });
         // large image
-        $query->leftJoin('files as large_files_table',function(JoinClause $join)use($imageClass){
-           $join->on('images_table.large_id','large_files_table.id')
-               ->where('assets.document_type',$imageClass);
+        $query->leftJoin('files as large_files_table', function (JoinClause $join) use ($imageClass) {
+            $join->on('images_table.large_id', 'large_files_table.id')
+                ->where('assets.document_type', $imageClass);
         });
         // original image
-        $query->leftJoin('files as original_files_table',function(JoinClause $join)use($imageClass){
-           $join->on('images_table.image_id','original_files_table.id')
-               ->where('assets.document_type',$imageClass);
+        $query->leftJoin('files as original_files_table', function (JoinClause $join) use ($imageClass) {
+            $join->on('images_table.image_id', 'original_files_table.id')
+                ->where('assets.document_type', $imageClass);
         });
 
         $this->appendToSelect("
@@ -113,7 +114,7 @@ class Asset extends Model
      */
     public function scopeOfType($query, $string)
     {
-        $query->where('document_type',$string);
+        $query->where('document_type', $string);
     }
     /*
      * SCOPES

@@ -1,4 +1,5 @@
 <?php
+
 namespace Combustion\Assets;
 
 use Combustion\Assets\Exceptions\FileCouldNotBeMovedToCloud;
@@ -35,15 +36,15 @@ class FileGateway
     /**
      * FileGateway constructor.
      *
-     * @param array                                    $config
+     * @param array $config
      * @param \Illuminate\Filesystem\FilesystemAdapter $localDriver
      * @param \Illuminate\Filesystem\FilesystemAdapter $couldDriver
      */
     public function __construct(array $config, FilesystemAdapter $localDriver, FilesystemAdapter $couldDriver)
     {
-        $this->config       = $this->validatesConfig($config);
-        $this->localDriver  = $localDriver;
-        $this->cloudDriver  = $couldDriver;
+        $this->config = $this->validatesConfig($config);
+        $this->localDriver = $localDriver;
+        $this->cloudDriver = $couldDriver;
     }
 
     /**
@@ -51,16 +52,16 @@ class FileGateway
      *
      * @return \Combustion\Assets\Models\File
      */
-    public function createFile(UploadedFile $file) : File
+    public function createFile(UploadedFile $file): File
     {
         $mimeType = $file->getClientMimeType() == "application/octet-stream" ? $file->getMimeType() : $file->getClientMimeType();
         // extract information needed from file
         $file_information = [
-            'mime'              => $mimeType,
-            'size'              => $file->getSize(),
-            'original_name'     => $file->getClientOriginalName(),
-            'url'               => $this->buildUrl($this->buildCloudPath($file->getClientOriginalName(),$file->getExtension())),
-            'extension'         => $file->getExtension(),
+            'mime' => $mimeType,
+            'size' => $file->getSize(),
+            'original_name' => $file->getClientOriginalName(),
+            'url' => $this->buildUrl($this->buildCloudPath($file->getClientOriginalName(), $file->getExtension())),
+            'extension' => $file->getExtension(),
         ];
         $this->moveToS3($file);
         $file = new File();
@@ -74,18 +75,16 @@ class FileGateway
      * @return bool
      * @throws \Combustion\Assets\Exceptions\FileCouldNotBeMovedToCloud
      */
-    protected function moveToS3(UploadedFile $file) : bool
+    protected function moveToS3(UploadedFile $file): bool
     {
         $disk = $this->cloudDriver;
-        try{
-            $disk->put($this->buildCloudPath($file->getClientOriginalName(),$file->getExtension()),file_get_contents($file));
-        }catch (\Exception $exception)
-        {
-            throw new FileCouldNotBeMovedToCloud($exception->getMessage(),$exception->getCode(),$exception);
+        try {
+            $disk->put($this->buildCloudPath($file->getClientOriginalName(), $file->getExtension()), file_get_contents($file));
+        } catch (\Exception $exception) {
+            throw new FileCouldNotBeMovedToCloud($exception->getMessage(), $exception->getCode(), $exception);
         }
-        if(isset($this->config['keep_local_copy']) && !$this->config['keep_local_copy'])
-        {
-            exec('rm '.$file->getRealPath());
+        if (isset($this->config['keep_local_copy']) && !$this->config['keep_local_copy']) {
+            exec('rm ' . $file->getRealPath());
         }
         return true;
     }
@@ -96,11 +95,11 @@ class FileGateway
      *
      * @return string
      */
-    public function buildCloudPath(string $fileName, string $fileExtension) : string
+    public function buildCloudPath(string $fileName, string $fileExtension): string
     {
         $url = $this->getStorageFolder();
-        $url .= '/'.$fileName;
-        $url .= '.'.$fileExtension;
+        $url .= '/' . $fileName;
+        $url .= '.' . $fileExtension;
         return $url;
     }
 
@@ -111,33 +110,33 @@ class FileGateway
      */
     public function buildUrl(string $couldPath)
     {
-        return $this->getBaseUrl().'/'.$couldPath;
+        return $this->getBaseUrl() . '/' . $couldPath;
     }
 
     /**
      * @return string
      */
-    public function getBaseUrl() : string
+    public function getBaseUrl(): string
     {
-        if(isset($this->config['cloud_base_url']))return $this->config['cloud_base_url'];
-        if(!is_null(env('CLOUD_STORAGE_BASE_URL',null)))return env('CLOUD_STORAGE_BASE_URL');
+        if (isset($this->config['cloud_base_url'])) return $this->config['cloud_base_url'];
+        if (!is_null(env('CLOUD_STORAGE_BASE_URL', null))) return env('CLOUD_STORAGE_BASE_URL');
         return 'https://checkConfigForFileGateway.now';
     }
 
     /**
      * @return string
      */
-    public function getStorageFolder() : string
+    public function getStorageFolder(): string
     {
-        if(isset($this->config['cloud_folder']))return $this->config['cloud_folder'];
-        if(!is_null(env('CLOUD_FOLDER',null)))return env('CLOUD_FOLDER');
+        if (isset($this->config['cloud_folder'])) return $this->config['cloud_folder'];
+        if (!is_null(env('CLOUD_FOLDER', null))) return env('CLOUD_FOLDER');
         return 'documents';
     }
 
     /**
      * @return array
      */
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -148,19 +147,18 @@ class FileGateway
      * @return array
      * @throws \Combustion\Assets\Exceptions\ValidationFailed
      */
-    public function validatesConfig(array $config) : array
+    public function validatesConfig(array $config): array
     {
         $validationRules = [
-            "cloud_base_url"                => "required|string",
-            "cloud_folder"                  => "required|string",
-            "local_driver"                  => "required|string",
-            "local_document_folder"         => "required|string",
-            "local_document_folder_name"    => "required|string",
-            "keep_local_copy"               => "required|boolean",
+            "cloud_base_url" => "required|string",
+            "cloud_folder" => "required|string",
+            "local_driver" => "required|string",
+            "local_document_folder" => "required|string",
+            "local_document_folder_name" => "required|string",
+            "keep_local_copy" => "required|boolean",
         ];
-        $validation = Validator::make($config,$validationRules);
-        if($validation->fails())
-        {
+        $validation = Validator::make($config, $validationRules);
+        if ($validation->fails()) {
             throw new ValidationFailed("Validation for FileGateway config array failed.");
         }
         return $config;

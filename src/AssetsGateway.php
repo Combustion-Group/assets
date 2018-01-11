@@ -56,6 +56,20 @@ class AssetsGateway
         return $asset;
     }
 
+    public function fileFromUrl(string $url): UploadedFile
+    {
+        list($localPath,$photoData) = $this->downloadInternetFile($url);
+        $file = new UploadedFile($localPath,$url);
+        return $file;
+    }
+
+    private function downloadInternetFile(string $url)
+    {
+        $localImage = storage_path('app/documents') . "/$url";
+        $photo = collect($photos)->sortByDesc('width')->first();
+        file_put_contents($localImage, file_get_contents($url));
+        return ['local_path' => $localImage, 'data' => $photo];
+    }
 
     /**
      * @param \Combustion\Assets\Contracts\HasAssetsInterface $model
